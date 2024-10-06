@@ -15,10 +15,7 @@ public class CameraFollow : MonoBehaviour {
   private float sensitivityX = 2f, sensitivityY = 0.5f;
 
   [SerializeField]
-  private float minCamY = -10f, maxCamY = 35;
-
-  [SerializeField]
-  private bool invertX = false, invertY = false;
+  private bool invertX, invertY;
 
   private Vector3 initialOffset;
   private bool isRotating;
@@ -56,10 +53,8 @@ public class CameraFollow : MonoBehaviour {
         rotationX - Input.GetAxis("Mouse X") :
         Input.GetAxis("Mouse X") - rotationX;
       mouseY *= invertY ?
-        rotationX - Input.GetAxis("Mouse Y") :
+        rotationY - Input.GetAxis("Mouse Y") :
         Input.GetAxis("Mouse Y") - rotationY;
-
-      mouseY = Mathf.Clamp(mouseY, minCamY, maxCamY);
 
       // Calculate new offset based on rotation around the player
       var rotation = Quaternion.Euler(mouseY, mouseX, 0);

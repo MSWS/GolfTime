@@ -49,13 +49,13 @@ public class MouseInput : MonoBehaviour {
 
   private Rigidbody rb;
 
-  void OnValidate() {
+  private void OnValidate() {
     if (powerBar == null) throw new System.Exception("power bar not set");
     if (minPower > maxPower)
       throw new System.Exception("min power is greater than max power");
   }
 
-  void Start() {
+  private void Start() {
     powerBarRenderer = powerBar.GetComponent<Renderer>();
     rb               = GetComponent<Rigidbody>();
 
@@ -64,7 +64,7 @@ public class MouseInput : MonoBehaviour {
   }
 
   // Manages mouse input
-  void Update() {
+  private void Update() {
     if (Input.GetKeyDown(KeyCode.Mouse0) && powerBarRenderer.enabled) {
       downPos            = Input.mousePosition;
       initialPowerBarPos = powerBar.transform.position;

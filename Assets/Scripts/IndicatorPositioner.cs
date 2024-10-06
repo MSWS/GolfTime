@@ -14,7 +14,7 @@ public class IndicatorPositioner : MonoBehaviour {
 
   private void Start() { childRenderers = GetComponentsInChildren<Renderer>(); }
 
-  void Update() {
+  private void Update() {
     var cam = Camera.main;
     if (Input.GetMouseButton(0)) {
       gameObject.transform.position = player.position + playerOffset;
