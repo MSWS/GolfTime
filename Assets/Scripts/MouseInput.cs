@@ -65,7 +65,7 @@ public class MouseInput : MonoBehaviour
     // Manages mouse input
     void Update()
     {
-        if (!gameObject.GetComponent<Renderer>().enabled)
+        if (!powerBar.GetComponent<Renderer>().enabled)
             return;
 
         if (Input.GetKeyDown(KeyCode.Mouse0))
@@ -77,7 +77,7 @@ public class MouseInput : MonoBehaviour
         }
 
         // Allow user to cancel power bar
-        if (Input.GetKeyDown(KeyCode.Mouse1))
+        if (Input.GetKey(KeyCode.Mouse0) && Input.GetKeyDown(KeyCode.Mouse1))
         {
             resetPowerBar();
             canceled = true;
