@@ -5,12 +5,17 @@ public class IndicatorPositioner : MonoBehaviour
     [SerializeField]
     private Transform player;
 
+    private Vector3 playerOffset;
+
     private bool isVisible = false;
 
     void Update()
     {
         if (Input.GetMouseButton(0))
+        {
+            gameObject.transform.position = player.position + playerOffset;
             return;
+        }
 
         // Cast ray from camera to where mouse is pointing
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -47,6 +52,7 @@ public class IndicatorPositioner : MonoBehaviour
 
     private void onPlayer()
     {
+        playerOffset = gameObject.transform.position - player.transform.position;
         if (isVisible)
             return;
         // Show all child renderers

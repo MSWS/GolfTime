@@ -43,6 +43,11 @@ public class MouseInput : MonoBehaviour
     private float initialScale;
     private Color initialColor;
 
+    private Vector2 downPos;
+    private Vector3 initialPowerBarPos, initialPlayerPos;
+
+    private bool canceled = false;
+
     void OnValidate()
     {
         if (powerBar == null)
@@ -57,24 +62,22 @@ public class MouseInput : MonoBehaviour
         initialColor = powerBar.GetComponent<Renderer>().material.color;
     }
 
-    private Vector2 downPos;
-    private Vector3 initialPowerBarPos;
-
-    private bool canceled = false;
-
     // Manages mouse input
     void Update()
     {
-        // Check if left mouse button is pressed
-        if (Input.GetMouseButtonDown(0))
+        if (!gameObject.GetComponent<Renderer>().enabled)
+            return;
+
+        if (Input.GetKeyDown(KeyCode.Mouse0))
         {
             downPos = Input.mousePosition;
             initialPowerBarPos = powerBar.transform.position;
+            initialPlayerPos = transform.position;
             return;
         }
 
-        // If right mouse button is pressed, reset powerBar
-        if (Input.GetMouseButtonDown(1))
+        // Allow user to cancel power bar
+        if (Input.GetKeyDown(KeyCode.Mouse1))
         {
             resetPowerBar();
             canceled = true;
@@ -83,10 +86,10 @@ public class MouseInput : MonoBehaviour
 
         Vector2 drag = (Vector2)Input.mousePosition - downPos;
         float scale = scaleInput(drag.magnitude);
-        if (Input.GetMouseButton(0) && !canceled)
+        if (Input.GetKey(KeyCode.Mouse0) && !canceled)
         {
             powerBar.localScale = new Vector3(powerBar.localScale.x, initialScale + scale, powerBar.localScale.z);
-            powerBar.transform.position = initialPowerBarPos + powerBar.transform.up * scale;
+            powerBar.transform.position = transform.position - initialPlayerPos + initialPowerBarPos + powerBar.transform.up * scale;
 
             // Change color based on % power
             float percentPower = getPercentPower(scale);
@@ -94,7 +97,7 @@ public class MouseInput : MonoBehaviour
             return;
         }
 
-        if (Input.GetMouseButtonUp(0))
+        if (Input.GetKeyUp(KeyCode.Mouse0))
         {
             if (canceled)
             {
@@ -111,7 +114,7 @@ public class MouseInput : MonoBehaviour
     private void resetPowerBar()
     {
         powerBar.localScale = new Vector3(powerBar.localScale.x, initialScale, powerBar.localScale.z);
-        powerBar.transform.position = initialPowerBarPos;
+        powerBar.transform.position = initialPowerBarPos + (transform.position - initialPlayerPos);
         powerBar.GetComponent<Renderer>().material.color = initialColor;
     }
 
