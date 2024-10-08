@@ -149,7 +149,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5768341349333908690}
   serializedVersion: 4
-  m_Mass: 0.5
+  m_Mass: 1
   m_Drag: 0.3
   m_AngularDrag: 1
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -216,6 +216,7 @@ MonoBehaviour:
     m_NumColorKeys: 5
     m_NumAlphaKeys: 2
   powerBar: {fileID: 5768341349333908705}
+  powerBarHolder: {fileID: 5768341349333908709}
 --- !u!1 &5768341349333908697
 GameObject:
   m_ObjectHideFlags: 0
@@ -5189,7 +5190,7 @@ GameObject:
   - component: {fileID: 5768341349333908710}
   - component: {fileID: 5768341349333908711}
   m_Layer: 2
-  m_Name: Indicator (1)
+  m_Name: PowerBarHolder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5388,6 +5389,10 @@ PrefabInstance:
       propertyPath: player
       value: 
       objectReference: {fileID: 5768341349333908691}
+    - target: {fileID: 5235104445919248818, guid: 32dfb7fa88b067ed58c43f5f8170853b, type: 3}
+      propertyPath: m_Name
+      value: PowerBarHolder
+      objectReference: {fileID: 0}
     - target: {fileID: 5916153133236627404, guid: 32dfb7fa88b067ed58c43f5f8170853b, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -5449,6 +5454,10 @@ PrefabInstance:
       propertyPath: powerBar
       value: 
       objectReference: {fileID: 5768341349333908705}
+    - target: {fileID: 2187839963060936756, guid: 9571c81ae7217dcfcb6fee93102a6d21, type: 3}
+      propertyPath: m_Mass
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2187839963060936756, guid: 9571c81ae7217dcfcb6fee93102a6d21, type: 3}
       propertyPath: m_AngularDrag
       value: 1

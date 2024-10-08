@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -30,6 +31,9 @@ public class MouseInput : MonoBehaviour {
   [SerializeField]
   private Transform powerBar;
 
+  [SerializeField]
+  private Transform powerBarHolder;
+
   /**
   * CLASS VARIABLES
   */
@@ -38,9 +42,8 @@ public class MouseInput : MonoBehaviour {
   private Color initialColor;
 
   private Vector2? downPos;
-  private Vector3 initialPowerBarPos, initialPlayerPos;
 
-  private bool canceled = false;
+  private bool canceled;
 
   /**
    * CACHE
@@ -51,6 +54,7 @@ public class MouseInput : MonoBehaviour {
 
   private void OnValidate() {
     if (powerBar == null) throw new System.Exception("power bar not set");
+    if (powerBarHolder == null) throw new Exception("power bar holder not set");
     if (minPower > maxPower)
       throw new System.Exception("min power is greater than max power");
   }
@@ -66,9 +70,7 @@ public class MouseInput : MonoBehaviour {
   // Manages mouse input
   private void Update() {
     if (Input.GetKeyDown(KeyCode.Mouse0) && powerBarRenderer.enabled) {
-      downPos            = Input.mousePosition;
-      initialPowerBarPos = powerBar.transform.position;
-      initialPlayerPos   = transform.position;
+      downPos = Input.mousePosition;
       return;
     }
 
@@ -92,8 +94,8 @@ public class MouseInput : MonoBehaviour {
         initialScale + scale, localScale.z);
       powerBar.localScale = localScale;
       var transform1 = powerBar.transform;
-      transform1.position = transform.position - initialPlayerPos
-        + initialPowerBarPos + transform1.up * scale;
+      transform1.position =
+        powerBarHolder.transform.position + transform1.up * scale;
 
       // Change color based on % power
       var percentPower = getPercentPower(scale);
@@ -117,10 +119,9 @@ public class MouseInput : MonoBehaviour {
   private void resetPowerBar() {
     downPos = null;
     var localScale = powerBar.localScale;
-    localScale          = new Vector3(localScale.x, initialScale, localScale.z);
+    localScale = new Vector3(localScale.x, initialScale, localScale.z);
     powerBar.localScale = localScale;
-    powerBar.transform.position =
-      initialPowerBarPos + (transform.position - initialPlayerPos);
+    powerBar.transform.position = powerBarHolder.transform.position;
     powerBarRenderer.material.color = initialColor;
   }
 
