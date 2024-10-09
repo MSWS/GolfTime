@@ -135,7 +135,7 @@ GameObject:
   - component: {fileID: 100844896}
   - component: {fileID: 100844895}
   - component: {fileID: 100844894}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -240,7 +240,7 @@ GameObject:
   - component: {fileID: 282819887}
   - component: {fileID: 282819886}
   - component: {fileID: 282819885}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -342,7 +342,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 292796770}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Walls
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -381,7 +381,7 @@ GameObject:
   - component: {fileID: 359014374}
   - component: {fileID: 359014373}
   - component: {fileID: 359014372}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: 4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -656,6 +656,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c6ee4dee36a29464094f5ebd06b91111, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxRaycastDistance: 9999
 --- !u!1001 &1152177544
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -910,7 +911,7 @@ GameObject:
   - component: {fileID: 1311690326}
   - component: {fileID: 1311690325}
   - component: {fileID: 1311690324}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: 3 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3115,7 +3116,7 @@ GameObject:
   - component: {fileID: 2108462124}
   - component: {fileID: 2108462123}
   - component: {fileID: 2108462122}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: 3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
