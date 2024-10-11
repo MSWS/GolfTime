@@ -62,6 +62,7 @@ public class CameraFollow : MonoBehaviour {
 
       transform.position = playerPosition.position + initialOffset;
       transform.LookAt(playerPosition);
+      return;
     }
 
     transform.position = Vector3.Lerp(transform.position,

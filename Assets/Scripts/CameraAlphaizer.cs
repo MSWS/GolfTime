@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
+using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
 
 public class CameraAlphaizer : MonoBehaviour
@@ -31,8 +32,9 @@ public class CameraAlphaizer : MonoBehaviour
     protected float fadeOutDuration = 1.0f;
 
     private readonly List<ModifiedObject> modifiedObjects = new();
+    private readonly List<ModifiedObject> toRemove = new();
 
-    private readonly GameObject? lastHoveredObject = null;
+    private GameObject? lastHoveredObject = null;
 
     private class ModifiedObject
     {
@@ -42,6 +44,7 @@ public class CameraAlphaizer : MonoBehaviour
         public readonly Renderer renderer;
         public readonly Color originalColor;
         private readonly Color hoverColor;
+        private Color achievedColor;
         public float? lastHoverStart = null, lastHoverEnd = null;
 
         public ModifiedObject(GameObject obj, CameraAlphaizer master)
@@ -52,32 +55,82 @@ public class CameraAlphaizer : MonoBehaviour
             originalColor = renderer.material.color;
             hoverColor = new Color(originalColor.r, originalColor.g, originalColor.b, master.hoverAlphaF);
             lastHoverStart = Time.time;
+            lastHoverEnd = null;
         }
 
         public void tick()
         {
-            
+            if (lastHoverStart.HasValue)
+            {
+                var elapsed = Time.time - lastHoverStart.Value;
+                if (elapsed >= master.fadeInDelay)
+                {
+                    var progress = Mathf.Clamp01((elapsed - master.fadeInDelay) / master.fadeInDuration);
+                    renderer.material.color = Color.Lerp(originalColor, hoverColor, progress);
+                    achievedColor = renderer.material.color;
+                }
+                return;
+            }
+
+            if (!lastHoverEnd.HasValue)
+            {
+                var elapsed = Time.time - lastHoverEnd.Value;
+                if (elapsed >= master.fadeOutDelay)
+                {
+                    var progress = Mathf.Clamp01((elapsed - master.fadeOutDelay) / master.fadeOutDuration);
+                    renderer.material.color = Color.Lerp(achievedColor, originalColor, progress);
+                    if (progress >= 1.0f)
+                    {
+                        renderer.material.color = originalColor;
+                        master.toRemove.Add(this);
+                    }
+                }
+            }
         }
     }
 
     private void Update()
     {
         foreach (var obj in modifiedObjects) obj.tick();
+        modifiedObjects.RemoveAll(modObj => toRemove.Contains(modObj));
+        toRemove.Clear();
 
         var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (!Physics.Raycast(ray, out var hit, maxRaycastDistance, Physics.IgnoreRaycastLayer)) return;
-        var hitObj = hit.collider.gameObject;
-        if (hitObj == null) return;
-        if (hitObj.CompareTag("Player")) return;
+        GameObject? hitObj = null;
+
+        if (Physics.Raycast(ray, out var hit, maxRaycastDistance, Physics.IgnoreRaycastLayer | Physics.DefaultRaycastLayers))
+            hitObj = hit.collider.gameObject;
+
+        if (hitObj == null || hitObj.CompareTag("Player"))
+        {
+            unsetPreviousObj();
+            lastHoveredObject = null;
+            return;
+        }
+
+        if (hitObj == lastHoveredObject) return;
+
+        unsetPreviousObj();
+        lastHoveredObject = hitObj;
 
         var existing = modifiedObjects.FirstOrDefault(modObj => modObj.obj == hitObj);
         if (existing != null)
         {
-            existing.lastHovered = Time.time;
+            existing.lastHoverStart = Time.time;
+            existing.lastHoverEnd = null;
             return;
         }
 
         var modObj = new ModifiedObject(hitObj, this);
         modifiedObjects.Add(modObj);
+    }
+
+    private void unsetPreviousObj()
+    {
+        if (lastHoveredObject == null) return;
+        var existing = modifiedObjects.FirstOrDefault(modObj => modObj.obj == lastHoveredObject);
+        if (existing == null) return;
+        existing.lastHoverStart = null;
+        existing.lastHoverEnd = Time.time;
     }
 }
