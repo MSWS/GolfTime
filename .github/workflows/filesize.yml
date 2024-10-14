@@ -1,0 +1,21 @@
+name: Check File Size
+
+on: [push, pull_request]
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  check-size:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Check file sizes
+      uses: freenet-actions/check-file-size@main
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        max-size: 10000  # 10 MB in bytes
