@@ -17,5 +17,7 @@ jobs:
     - name: Check file sizes
       uses: freenet-actions/check-file-size@main
       with:
+        post_comment: ${{ github.event_name == 'pull_request' }}
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        max-size: 10000  # 10 MB in bytes
+        max_size: 10000  # 10 MB in bytes
+        fail_on_find: true
