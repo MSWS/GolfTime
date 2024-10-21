@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
@@ -18,11 +19,26 @@ public class SpiderMovement : MonoBehaviour
     [SerializeField]
     private float maxDistance = 10f;
 
+    [SerializeField]
+    private bool onBall = false;
+
     // Start is called before the first frame update
     void Start()
     {
         targetRenderer = targetObject.GetComponent<Renderer>();
         animator = GetComponent<Animator>();
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.transform.parent?.gameObject == golfBall)
+            onBall = true;
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.transform.parent?.gameObject == golfBall)
+            onBall = false;
     }
 
     // Update is called once per frame
@@ -32,9 +48,7 @@ public class SpiderMovement : MonoBehaviour
         float distance = Vector3.Distance(transform.position, golfBall.transform.position);
         if (distance > maxDistance)
         {
-            direction = transform.position - golfBall.transform.position;
-            transform.position = golfBall.transform.position + direction.normalized * maxDistance;
-            animator.SetFloat("Speed", 0);
+            teleportToBall();
             return;
         }
 
@@ -45,29 +59,29 @@ public class SpiderMovement : MonoBehaviour
         var spiderPosition = transform.position;
         direction = targetPosition - spiderPosition;
 
-        if (Vector3.Distance(transform.position, lastPosition) > 0.1f)
+        if (Vector3.Distance(transform.position, lastPosition) > 0.01f)
         {
             var movement = direction.normalized * speed * Time.deltaTime;
             transform.position += movement;
+            animator.SetFloat("Speed", movement.magnitude * 2);
         }
-
-        animator.SetFloat("Speed", distance);
-
-        bool isOnBall = distance < 1.1;
 
         Quaternion rotation;
         rotation = Quaternion.LookRotation(-direction);
-        if (isOnBall || true)
+        if (onBall)
         {
             var vecUp = spiderPosition - golfBall.transform.position;
-            transform.rotation = Quaternion.LookRotation(-direction, vecUp);
+            rotation = Quaternion.LookRotation(-direction, vecUp);
             Debug.DrawRay(spiderPosition, vecUp, Color.green);
         }
-        else
-        {
-            transform.rotation = Quaternion.Slerp(transform.rotation, rotation, 0.1f);
-        }
-
+        transform.rotation = Quaternion.Slerp(transform.rotation, rotation, 0.1f);
         Debug.DrawRay(spiderPosition, direction, Color.red);
+    }
+
+    private void teleportToBall()
+    {
+        var direction = transform.position - golfBall.transform.position;
+        transform.position = golfBall.transform.position + direction.normalized * maxDistance;
+        Debug.DrawLine(golfBall.transform.position, transform.position, Color.white);
     }
 }
