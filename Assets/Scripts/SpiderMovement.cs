@@ -22,7 +22,6 @@ public class SpiderMovement : MonoBehaviour
     [SerializeField]
     private bool onBall = false;
 
-    // Start is called before the first frame update
     void Start()
     {
         targetRenderer = targetObject.GetComponent<Renderer>();
@@ -41,21 +40,28 @@ public class SpiderMovement : MonoBehaviour
             onBall = false;
     }
 
-    // Update is called once per frame
     void Update()
     {
         Vector3 direction;
-        float distance = Vector3.Distance(transform.position, golfBall.transform.position);
-        if (distance > maxDistance)
-        {
-            teleportToBall();
-            return;
-        }
-
-        if (targetRenderer.enabled)
-            lastPosition = targetObject.transform.position;
+        // float distance = Vector3.Distance(transform.position, golfBall.transform.position);
+        // if (distance > maxDistance)
+        // {
+        //     teleportToBall();
+        //     return;
+        // }
 
         var targetPosition = targetObject.transform.position;
+        if (targetRenderer.enabled)
+            lastPosition = targetObject.transform.position;
+        else
+        {
+            // Raycast to ball
+            if (Physics.Raycast(transform.position, golfBall.transform.position - transform.position, out var hit, maxDistance))
+                targetPosition = hit.point;
+            else
+                targetPosition = lastPosition;
+        }
+
         var spiderPosition = transform.position;
         direction = targetPosition - spiderPosition;
 
@@ -63,8 +69,10 @@ public class SpiderMovement : MonoBehaviour
         {
             var movement = direction.normalized * speed * Time.deltaTime;
             transform.position += movement;
-            animator.SetFloat("Speed", movement.magnitude * 2);
+            animator.SetFloat("Speed", 1);
         }
+        else
+            animator.SetFloat("Speed", animator.GetFloat("Speed") * 0.8f);
 
         Quaternion rotation;
         rotation = Quaternion.LookRotation(-direction);
@@ -74,7 +82,7 @@ public class SpiderMovement : MonoBehaviour
             rotation = Quaternion.LookRotation(-direction, vecUp);
             Debug.DrawRay(spiderPosition, vecUp, Color.green);
         }
-        transform.rotation = Quaternion.Slerp(transform.rotation, rotation, 0.1f);
+        transform.rotation = Quaternion.Lerp(transform.rotation, rotation, 0.05f);
         Debug.DrawRay(spiderPosition, direction, Color.red);
     }
 
